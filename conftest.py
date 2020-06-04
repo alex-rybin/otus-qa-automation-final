@@ -3,16 +3,17 @@ import logging
 import pytest
 from envparse import env
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.abstract_event_listener import AbstractEventListener
 from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
+from sources.logic.common import Locator
+
 env.read_envfile('.env.local')
 BASE_URL = f'http://{env.str("PRESTASHOP_HOST")}'
 BROWSER_CHOICES = ['firefox', 'chrome', 'opera']
-HEADER = (By.XPATH, '//nav[@id="top"]')  # todo: поправить
+HEADER = Locator('//img[@alt="PrestaShop"]')
 
 
 class EventListener(AbstractEventListener):
@@ -82,18 +83,19 @@ def pytest_addoption(parser):
     parser.addoption(
         '-B',
         '--browser',
-        default='firefox',
+        default=BROWSER_CHOICES[0],
         choices=BROWSER_CHOICES,
-        help='Browser to use in tests. Can be firefox, chrome or opera. Default: firefox',
+        help=(
+            f'Browser to use in tests. '
+            f'Can be one of: {", ".join(BROWSER_CHOICES)}. Default: {BROWSER_CHOICES[0]}'
+        ),
     )
 
 
 @pytest.fixture(scope='session')
 def logger():
     logging.basicConfig(
-        format='%(asctime)s %(name)s [%(levelname)s]: %(message)s',
-        level=logging.INFO,
-        force=True,
+        format='%(asctime)s %(name)s [%(levelname)s]: %(message)s', level=logging.INFO, force=True
     )
     return logging.getLogger('Fixture')
 
@@ -107,7 +109,6 @@ def browser(logger, request):
             command_executor=f'http://{env.str("SELENOID_HOST")}:4444/wd/hub',
             desired_capabilities={
                 'browserName': selected_browser,
-                'loggingPrefs': {'browser': 'ALL'},
                 'acceptInsecureCerts': True,
             },
         ),

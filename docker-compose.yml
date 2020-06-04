@@ -16,7 +16,7 @@ services:
     environment:
       - MARIADB_HOST=mariadb
       - MARIADB_PORT_NUMBER=3306
-      - PRESTASHOP_HOST=localhost
+      - PRESTASHOP_HOST=otus-qa-automation-final_prestashop_1
       - PRESTASHOP_DATABASE_USER=bn_prestashop
       - PRESTASHOP_DATABASE_NAME=bitnami_prestashop
       - ALLOW_EMPTY_PASSWORD=yes
@@ -38,7 +38,7 @@ services:
   selenoid-ui:
     image: aerokube/selenoid-ui
     ports:
-      - '8080:8080'
+      - '8081:8080'
     command: ['--selenoid-uri', 'http://otus-qa-automation-final_selenoid_1:4444']
     depends_on:
       - selenoid
