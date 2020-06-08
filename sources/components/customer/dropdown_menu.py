@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.remote import webelement
 
 from sources.components.base import BaseComponent
@@ -34,19 +35,21 @@ class DropdownMenu(BaseComponent):
         return self._options
 
     def toggle_menu(self):
-        self.button.click()
+        with allure.step('Переключение состояния выпадающего меню'):
+            self.button.click()
 
     def is_open(self) -> bool:
         return self.menu.is_displayed()
 
     def select(self, value: str):
-        if not self.is_open():
-            self.toggle_menu()
+        with allure.step(f'Выбор опции {value}'):
+            if not self.is_open():
+                self.toggle_menu()
 
-        for item in self.options:
-            label = item.text
-            if label == value:
-                item.click()
-                return
+            for item in self.options:
+                label = item.text
+                if label == value:
+                    item.click()
+                    return
 
         raise ValueError(f'Option "{value}" is not present in menu')

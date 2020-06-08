@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -34,8 +35,11 @@ class StoreSearchPage(StoreBasePage):
         return self._product_list
 
     def search(self, value: str):
-        self.search_field.send_keys(value)
-        self.search_field.send_keys(Keys.ENTER)
+        with allure.step(f'Поиск товара {value}'):
+            with allure.step(f'Ввод текста {value}'):
+                self.search_field.send_keys(value)
+            with allure.step(f'Нажатие кнопки Enter'):
+                self.search_field.send_keys(Keys.ENTER)
         WebDriverWait(self.browser, 5).until(
             EC.visibility_of_element_located(StoreSearchPageLocators.PRODUCT_LIST)
         )
