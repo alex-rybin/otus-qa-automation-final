@@ -1,61 +1,49 @@
-from decimal import Decimal
-
 import allure
 
+from sources.pages.customer.base import StoreBasePage
 from sources.pages.customer.catalog import StoreCatalogPage
 from sources.pages.customer.product import StoreProductPage
 
 
 @allure.feature('Корзина')
-@allure.title('Имя добавленного в корзину товара')
+@allure.title('Кнопка корзины неактивна без товаров')
+@allure.severity(allure.severity_level.TRIVIAL)
+def test_cart_button_disabled_without_products(browser):
+    page = StoreBasePage(browser)
+    assert page.is_cart_button_active() is False
+
+
+@allure.feature('Корзина')
+@allure.title('Кнопка корзины активна после добавления товаров')
 @allure.severity(allure.severity_level.CRITICAL)
-def test_add_to_cart_product_name(browser):
+def test_cart_button_enabled_with_products(browser):
     page = StoreCatalogPage(browser)
     page.top_menu.click_menu_element('Accessories', 'Home Accessories')
     page.product_list.product_cards[0].click()
 
     page = StoreProductPage(browser)
-    product_name = page.title
     page.add_to_cart_button.click()
+    page.cart_modal.click_continue_shopping()
 
-    assert page.cart_modal.added_product_name.casefold() == product_name.casefold()
+    assert page.is_cart_button_active()
 
 
 @allure.feature('Корзина')
-@allure.title('Количество добавленного в корзину товара')
-@allure.severity(allure.severity_level.CRITICAL)
-def test_add_to_cart_quantity(browser):
-    quantity = 3
-
+@allure.title('Счётчик на кнопке корзины')
+@allure.severity(allure.severity_level.NORMAL)
+def test_cart_button_counter(browser):
     page = StoreCatalogPage(browser)
-    page.top_menu.click_menu_element('Accessories', 'Stationery')
+    assert page.get_cart_button_count() == 0
+
+    page.top_menu.click_menu_element('Accessories', 'Home Accessories')
     page.product_list.product_cards[0].click()
 
     page = StoreProductPage(browser)
-    page.set_quantity(quantity)
     page.add_to_cart_button.click()
+    page.cart_modal.click_continue_shopping()
+    assert page.get_cart_button_count() == 1
 
-    assert page.cart_modal.added_product_quantity == quantity
-
-
-@allure.feature('Корзина')
-@allure.title('Стоимость заказа при добавлении нескольких экземпляров товара')
-@allure.severity(allure.severity_level.CRITICAL)
-def test_add_to_cart_total_price(browser):
-    quantity = 3
-
-    page = StoreCatalogPage(browser)
-    page.top_menu.click_menu_element('Art')
-    page.product_list.product_cards[0].click()
-
-    page = StoreProductPage(browser)
-    price = page.price
-    page.set_quantity(quantity)
+    page.set_quantity(2)
     page.add_to_cart_button.click()
-
-    expected_price = (
-        round(Decimal(price.replace("$", "")) * quantity, 2)
-        + page.cart_modal.get_shipping_cost_decimal()
-    )
-
-    assert page.cart_modal.total_price == f'${expected_price}'
+    page.cart_modal.click_continue_shopping()
+    assert page.get_cart_button_count() == 3

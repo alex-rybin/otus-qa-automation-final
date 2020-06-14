@@ -18,7 +18,6 @@ class StoreProductPage(StoreBasePage):
     _title = None
     _price = None
     _quantity_input = None
-    _add_to_cart_button = None
 
     @property
     def title(self) -> str:
@@ -42,11 +41,7 @@ class StoreProductPage(StoreBasePage):
 
     @property
     def add_to_cart_button(self) -> webelement:
-        if not self._add_to_cart_button:
-            self._add_to_cart_button = self.browser.find_element(
-                *StoreProductPageLocators.ADD_TO_CART_BUTTON
-            )
-        return self._add_to_cart_button
+        return self.browser.find_element(*StoreProductPageLocators.ADD_TO_CART_BUTTON)
 
     @property
     def cart_modal(self) -> CartModal:
