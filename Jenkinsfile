@@ -65,6 +65,8 @@ pipeline {
                 }
                 sh "docker rm ${PROJECT_NAME}_tests_1"
                 sh 'docker rmi prestashop-tests'
+                sh "docker volume rm ${PROJECT_NAME}_mariadb_data"
+                sh "docker volume rm ${PROJECT_NAME}_prestashop_data"
             }
         }
     }

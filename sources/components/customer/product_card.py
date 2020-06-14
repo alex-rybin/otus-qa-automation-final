@@ -1,6 +1,7 @@
 from decimal import Decimal
 from typing import List
 
+import allure
 from selenium.webdriver.remote import webelement
 
 from sources.components.base import BaseComponent
@@ -8,9 +9,10 @@ from sources.logic.common import Locator
 
 
 class ProductCardLocators:
-    FLAGS = Locator('/ul/li')
-    DESCRIPTION = Locator('//h2/a')
-    PRICE = Locator('//span[@class="price"]')
+    FLAGS = Locator('./ul/li')
+    DESCRIPTION = Locator('.//h2/a')
+    PRICE = Locator('.//span[@class="price"]')
+    IMAGE = Locator('.//img')
 
 
 class ProductCard(BaseComponent):
@@ -52,3 +54,7 @@ class ProductCard(BaseComponent):
     def get_price_decimal(self) -> Decimal:
         price = self.price.text.replace('$', '')
         return Decimal(price)
+
+    def click(self):
+        with allure.step(f'Клик по товару {self.get_description_text()}'):
+            self.element.find_element(*ProductCardLocators.IMAGE).click()
