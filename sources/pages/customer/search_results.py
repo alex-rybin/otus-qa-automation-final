@@ -22,7 +22,7 @@ class StoreSearchPage(StoreBasePage):
     def sort_dropdown(self) -> DropdownMenu:
         if not self._sort_dropdown:
             self._sort_dropdown = DropdownMenu(
-                self.browser.find_element(*StoreSearchPageLocators.SORT_DROPDOWN)
+                self.browser.find_element(*StoreSearchPageLocators.SORT_DROPDOWN), self.browser
             )
         return self._sort_dropdown
 
@@ -30,7 +30,7 @@ class StoreSearchPage(StoreBasePage):
     def product_list(self) -> ProductList:
         if not self._product_list:
             self._product_list = ProductList(
-                self.browser.find_element(*StoreSearchPageLocators.PRODUCT_LIST)
+                self.browser.find_element(*StoreSearchPageLocators.PRODUCT_LIST), self.browser
             )
         return self._product_list
 

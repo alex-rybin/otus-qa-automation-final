@@ -6,8 +6,8 @@ from sources.logic.common import Locator
 
 
 class ProductListLocators:
-    TB_CONTAINER = Locator('//div[@class="thumbnail-container"]')
-    NO_RESULTS_SECTION = Locator('//section[contains(@class, "page-not-found")]')
+    TB_CONTAINER = Locator('.//div[@class="thumbnail-container"]')
+    NO_RESULTS_SECTION = Locator('.//section[contains(@class, "page-not-found")]')
 
 
 class ProductList(BaseComponent):
@@ -18,7 +18,7 @@ class ProductList(BaseComponent):
     def product_cards(self) -> List[ProductCard]:
         if not self._product_cards:
             self._product_cards = [
-                ProductCard(card)
+                ProductCard(card, self.browser)
                 for card in self.element.find_elements(*ProductListLocators.TB_CONTAINER)
             ]
         return self._product_cards
