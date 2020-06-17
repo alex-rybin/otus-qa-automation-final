@@ -109,27 +109,23 @@ def browser(logger, request):
     browser = EventFiringWebDriver(
         webdriver.Remote(
             command_executor=f'http://{env.str("SELENOID_HOST")}:4444/wd/hub',
-            desired_capabilities={
-                'browserName': selected_browser,
-                'acceptInsecureCerts': True,
-            },
+            desired_capabilities={'browserName': selected_browser, 'acceptInsecureCerts': True},
         ),
         EventListener(logging.getLogger('Browser')),
     )
-
-    request.addfinalizer(browser.quit)
-
     browser.get(f'http://{env.str("PRESTASHOP_HOST")}')
     # Ожидание на случай первоначальной установки
     WebDriverWait(browser, 100).until(EC.visibility_of_element_located(HEADER))
 
-    return browser
-
-
-def pytest_exception_interact(node, call, report):
-    driver = node.instance.driver
-    allure.attach(
-        name='screenshot',
-        contents=driver.get_screenshot_as_png(),
-        type=allure.attachment_type.PNG,
-    )
+    failed = request.session.testsfailed
+    yield browser
+    if request.session.testsfailed > failed:
+        try:
+            allure.attach(
+                name='screenshot',
+                contents=browser.get_screenshot_as_png(),
+                type=allure.attachment_type.PNG,
+            )
+        except:
+            pass
+    browser.quit()

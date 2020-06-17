@@ -11,5 +11,5 @@ def test_main_page_loaded(browser):
         page.carousel.is_displayed(),
         page.featured.is_displayed(),
     ]
-    expected = [True] * 6
+    expected = [True] * 5
     assert elements_visible == expected
