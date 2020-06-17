@@ -14,7 +14,7 @@ from sources.logic.common import Locator
 env.read_envfile('.env.local')
 
 BASE_URL = f'http://{env.str("PRESTASHOP_HOST")}'
-BROWSER_CHOICES = ['firefox', 'chrome', 'opera']
+BROWSER_CHOICES = ['chrome', 'firefox', 'opera']
 HEADER = Locator('//img[@alt="PrestaShop"]')
 
 
