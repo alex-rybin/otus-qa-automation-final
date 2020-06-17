@@ -1,6 +1,5 @@
 import logging
 
-import allure
 import pytest
 from envparse import env
 from selenium import webdriver
@@ -113,19 +112,11 @@ def browser(logger, request):
         ),
         EventListener(logging.getLogger('Browser')),
     )
+
+    request.addfinalizer(browser.quit)
+
     browser.get(f'http://{env.str("PRESTASHOP_HOST")}')
     # Ожидание на случай первоначальной установки
     WebDriverWait(browser, 100).until(EC.visibility_of_element_located(HEADER))
 
-    failed = request.session.testsfailed
-    yield browser
-    if request.session.testsfailed > failed:
-        try:
-            allure.attach(
-                name='screenshot',
-                contents=browser.get_screenshot_as_png(),
-                type=allure.attachment_type.PNG,
-            )
-        except:
-            pass
-    browser.quit()
+    return browser

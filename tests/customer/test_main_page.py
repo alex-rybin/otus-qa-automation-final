@@ -1,6 +1,11 @@
+import allure
+
 from sources.pages.customer.main import StoreMainPage
 
 
+@allure.feature('Главная страница')
+@allure.title('Наличие основных элементов главной страницы')
+@allure.severity(allure.severity_level.CRITICAL)
 def test_main_page_loaded(browser):
     page = StoreMainPage(browser)
     elements_visible = [
@@ -11,5 +16,5 @@ def test_main_page_loaded(browser):
         page.carousel.is_displayed(),
         page.featured.is_displayed(),
     ]
-    expected = [True] * 5
+    expected = [True] * 6
     assert elements_visible == expected
