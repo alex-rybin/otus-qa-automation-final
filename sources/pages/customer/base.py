@@ -9,12 +9,15 @@ class StoreBasePageLocators(BasePageLocators):
     LOGO = Locator('//img[@alt="PrestaShop"]')
     SEARCH_FIELD = Locator('//input[@name="s"]')
     TOP_MENU = Locator('//ul[@id="top-menu"]')
+    CART_BUTTON = Locator('//div[@id="_desktop_cart"]/div')
+    CART_BUTTON_COUNTER = Locator('//span[@class="cart-products-count"]')
 
 
 class StoreBasePage(BasePage):
     _logo = None
     _search_field = None
     _top_menu = None
+    _cart_button = None
 
     @property
     def logo(self) -> webelement:
@@ -35,3 +38,16 @@ class StoreBasePage(BasePage):
                 self.browser.find_element(*StoreBasePageLocators.TOP_MENU), self.browser
             )
         return self._top_menu
+
+    @property
+    def cart_button(self) -> webelement:
+        if not self._cart_button:
+            self._cart_button = self.browser.find_element(*StoreBasePageLocators.CART_BUTTON)
+        return self._cart_button
+
+    def is_cart_button_active(self) -> bool:
+        return 'inactive' not in self.cart_button.get_attribute('class')
+
+    def get_cart_button_count(self) -> int:
+        counter = self.browser.find_element(*StoreBasePageLocators.CART_BUTTON_COUNTER)
+        return int(counter.text.replace('(', '').replace(')', ''))

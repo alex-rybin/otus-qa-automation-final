@@ -54,20 +54,20 @@ pipeline {
                 }
             }
         }
-        stage('Teardown') {
-            steps {
-                echo 'Clearing up'
-                dir("${WORK_FOLDER}/${PROJECT_NAME}") {
-                    sh 'docker-compose down'
-                }
-                dir("${WORK_FOLDER}") {
-                    sh "rm -rfv *"
-                }
-                sh "docker rm ${PROJECT_NAME}_tests_1"
-                sh 'docker rmi prestashop-tests'
-                sh "docker volume rm ${PROJECT_NAME}_mariadb_data"
-                sh "docker volume rm ${PROJECT_NAME}_prestashop_data"
+    }
+    post {
+        always {
+            echo 'Clearing up'
+            dir("${WORK_FOLDER}/${PROJECT_NAME}") {
+                sh 'docker-compose down'
             }
+            dir("${WORK_FOLDER}") {
+                sh "rm -rfv *"
+            }
+            sh "docker rm ${PROJECT_NAME}_tests_1"
+            sh 'docker rmi prestashop-tests'
+            sh "docker volume rm ${PROJECT_NAME}_mariadb_data"
+            sh "docker volume rm ${PROJECT_NAME}_prestashop_data"
         }
     }
 }

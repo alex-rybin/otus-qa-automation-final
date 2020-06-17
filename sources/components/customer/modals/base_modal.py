@@ -10,6 +10,7 @@ from sources.logic.common import Locator
 class BaseModalLocators:
     HEADER = Locator('.//h4')
     CLOSE_BUTTON = Locator('.//button[@class="close"]')
+    MODAL_BACKGROUND = Locator('//div[@class="modal-backdrop fade in"]')
 
 
 class BaseModal(BaseComponent):
@@ -19,6 +20,7 @@ class BaseModal(BaseComponent):
     def __init__(self, element: webelement, browser: webdriver):
         super().__init__(element, webelement)
         WebDriverWait(browser, 1).until(EC.visibility_of(element))
+        self._background = browser.find_element(*BaseModalLocators.MODAL_BACKGROUND)
 
     @property
     def header(self) -> str:
@@ -32,6 +34,12 @@ class BaseModal(BaseComponent):
             self._close_button = self.element.find_element(*BaseModalLocators.CLOSE_BUTTON)
         return self._close_button
 
+    def _wait_until_closed(self):
+        WebDriverWait(self.browser, 1).until(
+            EC.staleness_of(self._background)
+        )
+
     def close_window(self):
         with allure.step('Клик по кнопке "закрыть" в модальном окне'):
             self.close_button.click()
+            self._wait_until_closed()

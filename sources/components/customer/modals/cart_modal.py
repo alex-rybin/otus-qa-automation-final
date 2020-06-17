@@ -1,6 +1,8 @@
 from decimal import Decimal
 
 import allure
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 from sources.components.customer.modals.base_modal import BaseModalLocators, BaseModal
 from sources.logic.common import Locator
@@ -71,6 +73,7 @@ class CartModal(BaseModal):
     def click_continue_shopping(self):
         with allure.step('Клик по кнопке "Continue Shopping"'):
             self.element.find_element(*CartModalLocators.CONTINUE_SHOPPING_BUTTON).click()
+            self._wait_until_closed()
 
     def click_proceed_to_checkout(self):
         with allure.step('Клик по кнопке "Proceed to Checkout"'):

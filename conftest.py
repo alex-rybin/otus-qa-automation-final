@@ -1,6 +1,5 @@
 import logging
 
-import allure
 import pytest
 from envparse import env
 from selenium import webdriver
@@ -109,10 +108,7 @@ def browser(logger, request):
     browser = EventFiringWebDriver(
         webdriver.Remote(
             command_executor=f'http://{env.str("SELENOID_HOST")}:4444/wd/hub',
-            desired_capabilities={
-                'browserName': selected_browser,
-                'acceptInsecureCerts': True,
-            },
+            desired_capabilities={'browserName': selected_browser, 'acceptInsecureCerts': True},
         ),
         EventListener(logging.getLogger('Browser')),
     )
@@ -124,12 +120,3 @@ def browser(logger, request):
     WebDriverWait(browser, 100).until(EC.visibility_of_element_located(HEADER))
 
     return browser
-
-
-def pytest_exception_interact(node, call, report):
-    driver = node.instance.driver
-    allure.attach(
-        name='screenshot',
-        contents=driver.get_screenshot_as_png(),
-        type=allure.attachment_type.PNG,
-    )

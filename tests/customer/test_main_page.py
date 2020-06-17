@@ -1,11 +1,20 @@
-from sources.pages.customer.base import StoreBasePage
+import allure
+
+from sources.pages.customer.main import StoreMainPage
 
 
+@allure.feature('Главная страница')
+@allure.title('Наличие основных элементов главной страницы')
+@allure.severity(allure.severity_level.CRITICAL)
 def test_main_page_loaded(browser):
-    page = StoreBasePage(browser)
-    assert page.logo
-
-
-def test_top_menu(browser):
-    page = StoreBasePage(browser)
-    page.top_menu.click_menu_element('Accessories', 'Home Accessories')
+    page = StoreMainPage(browser)
+    elements_visible = [
+        page.logo.is_displayed(),
+        page.cart_button.is_displayed(),
+        page.top_menu.element.is_displayed(),
+        page.search_field.is_displayed(),
+        page.carousel.is_displayed(),
+        page.featured.is_displayed(),
+    ]
+    expected = [True] * 6
+    assert elements_visible == expected
